@@ -1,0 +1,2 @@
+# ambaridemo
+from apache ambari
