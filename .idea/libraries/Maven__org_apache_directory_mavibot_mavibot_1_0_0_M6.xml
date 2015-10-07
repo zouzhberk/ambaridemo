@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.directory.mavibot:mavibot:1.0.0-M6">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/directory/mavibot/mavibot/1.0.0-M6/mavibot-1.0.0-M6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/directory/mavibot/mavibot/1.0.0-M6/mavibot-1.0.0-M6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/directory/mavibot/mavibot/1.0.0-M6/mavibot-1.0.0-M6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
