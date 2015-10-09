@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Thu Oct 08 06:51:58 CST 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-0150-4481-07f4-000010d37bb0 
+Fri Oct 09 13:06:06 CST 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-0150-4afd-e8e4-00000ae2e870 
 on database directory memory:/home/berk/workspace/ambaridemo/myDB/ambari with class loader sun.misc.Launcher$AppClassLoader@6193b845 
 Loaded from file:/home/berk/.m2/repository/org/apache/derby/derby/10.11.1.1/derby-10.11.1.1.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_45-b14
+java.runtime.version=1.8.0_60-b27
 user.dir=/home/berk/workspace/ambaridemo
 os.name=Linux
 os.arch=amd64
-os.version=3.13.0-34-generic
+os.version=3.10.5-3.el6.x86_64
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
