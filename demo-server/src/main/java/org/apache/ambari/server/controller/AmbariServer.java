@@ -103,8 +103,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 @Singleton
-public class AmbariServer
-{
+public class AmbariServer {
     private static Logger LOG = LoggerFactory.getLogger(DemoServer.class);
 
     // Set velocity logger
@@ -116,8 +115,7 @@ public class AmbariServer
     public static final EnumSet<DispatcherType> DISPATCHER_TYPES = EnumSet
             .of(DispatcherType.REQUEST);
 
-    static
-    {
+    static {
         Velocity.setProperty("runtime.log.logsystem.log4j.logger", VELOCITY_LOG_CATEGORY);
     }
 
@@ -207,8 +205,7 @@ public class AmbariServer
         DatabaseChecker.checkDBVersion();
         DatabaseChecker.checkDBConsistency();
 
-        try
-        {
+        try {
             ClassPathXmlApplicationContext parentSpringAppContext = new ClassPathXmlApplicationContext();
             parentSpringAppContext.refresh();
             ConfigurableListableBeanFactory factory = parentSpringAppContext
@@ -248,7 +245,7 @@ public class AmbariServer
             springWebAppContext.setParent(springAppContext);
 
             root.getServletContext()
-                .setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, springWebAppContext);
+                    .setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, springWebAppContext);
 
             certMan.initRootCert();
 
@@ -256,8 +253,7 @@ public class AmbariServer
             // is stateless
             // and does not use sessions.
             ServletContextHandler agentroot = new ServletContextHandler(serverForAgent, "/", ServletContextHandler.NO_SESSIONS);
-            if (configs.isAgentApiGzipped())
-            {
+            if (configs.isAgentApiGzipped()) {
                 configureHandlerCompression(agentroot);
             }
 
@@ -291,8 +287,7 @@ public class AmbariServer
             agentroot
                     .addFilter(SecurityFilter.class, "/*", DISPATCHER_TYPES);
 
-            if (configs.getApiAuthentication())
-            {
+            if (configs.getApiAuthentication()) {
                 root.addFilter(new FilterHolder(springSecurityFilter), "/api/*", DISPATCHER_TYPES);
                 // root.addFilter(new FilterHolder(springSecurityFilter)
                 // , "/proxy/*", DISPATCHER_TYPES);
@@ -435,8 +430,7 @@ public class AmbariServer
             root.addServlet(resources, "/resources/*");
             resources.setInitOrder(5);
 
-            if (configs.csrfProtectionEnabled())
-            {
+            if (configs.csrfProtectionEnabled()) {
                 sh.setInitParameter("com.sun.jersey.spi.container" +
                         ".ContainerRequestFilters", "org.apache.ambari" +
                         ".server.api.AmbariCsrfProtectionFilter");
@@ -450,8 +444,7 @@ public class AmbariServer
       /* Configure the API server to use the NIO connectors */
             ServerConnector apiConnector;
 
-            if (configs.getApiSSLAuthentication())
-            {
+            if (configs.getApiSSLAuthentication()) {
                 String httpsKeystore = configsMap
                         .get(Configuration.CLIENT_API_SSL_KSTR_DIR_NAME_KEY) +
                         File.separator + configsMap
@@ -485,9 +478,7 @@ public class AmbariServer
                 sapiConnector.setPort(configs.getClientSSLApiPort());
 
                 apiConnector = sapiConnector;
-            }
-            else
-            {
+            } else {
                 apiConnector = new ServerConnector(serverForAgent);
                 apiConnector.setPort(configs.getClientApiPort());
                 apiConnector.setIdleTimeout(configs
@@ -501,8 +492,7 @@ public class AmbariServer
             springAppContext.start();
 
             String osType = getServerOsType();
-            if (osType == null || osType.isEmpty())
-            {
+            if (osType == null || osType.isEmpty()) {
                 throw new RuntimeException(
                         Configuration.OS_VERSION_KEY + " is not " +
                                 " set in the ambari.properties file");
@@ -525,6 +515,9 @@ public class AmbariServer
             LOG.info("********* Initializing Controller **********");
             AmbariManagementController controller = injector
                     .getInstance(AmbariManagementController.class);
+
+            LOG.info("Berk,********* controller  = " +
+                    controller);
 
             LOG.info("********* Initializing Scheduled Request Manager " +
                     "**********");
@@ -558,15 +551,11 @@ public class AmbariServer
 
             server.join();
             LOG.info("Joined the Server");
-        }
-        catch (BadPaddingException bpe)
-        {
+        } catch (BadPaddingException bpe) {
             LOG.error("Bad keystore or private key password. " +
                     "HTTPS certificate re-importing may be required.");
             throw bpe;
-        }
-        catch (BindException bindException)
-        {
+        } catch (BindException bindException) {
             LOG.error("Could not bind to server port - instance may " +
                     "already be running. " +
                     "Terminating this instance.", bindException);
@@ -579,16 +568,14 @@ public class AmbariServer
      * at server properties)
      */
     private void disableInsecureProtocols(SslContextFactory factory) {
-        if (!configs.getSrvrDisabledCiphers().isEmpty())
-        {
+        if (!configs.getSrvrDisabledCiphers().isEmpty()) {
             String[] masks = configs.getSrvrDisabledCiphers()
-                                    .split(DISABLED_ENTRIES_SPLITTER);
+                    .split(DISABLED_ENTRIES_SPLITTER);
             factory.setExcludeCipherSuites(masks);
         }
-        if (!configs.getSrvrDisabledProtocols().isEmpty())
-        {
+        if (!configs.getSrvrDisabledProtocols().isEmpty()) {
             String[] masks = configs.getSrvrDisabledProtocols()
-                                    .split(DISABLED_ENTRIES_SPLITTER);
+                    .split(DISABLED_ENTRIES_SPLITTER);
             factory.setExcludeProtocols(masks);
         }
     }
@@ -619,8 +606,7 @@ public class AmbariServer
      */
     protected void configureHandlerCompression(
             ServletContextHandler context) {
-        if (configs.isApiGzipped())
-        {
+        if (configs.isApiGzipped()) {
             FilterHolder gzipFilter = context
                     .addFilter(GzipFilter.class, "/*", EnumSet
                             .of(DispatcherType.REQUEST));
@@ -653,8 +639,7 @@ public class AmbariServer
         sessionManager.getSessionCookieConfig().setName("AMBARISESSIONID");
 
         sessionManager.getSessionCookieConfig().setHttpOnly(true);
-        if (configs.getApiSSLAuthentication())
-        {
+        if (configs.getApiSSLAuthentication()) {
             sessionManager.getSessionCookieConfig().setSecure(true);
         }
 
@@ -673,8 +658,7 @@ public class AmbariServer
     @Transactional
     protected void initDB() throws AmbariException {
         if (configs.getPersistenceType() == PersistenceType.IN_MEMORY ||
-                dbInitNeeded)
-        {
+                dbInitNeeded) {
             LOG.info("Database init needed - creating default data");
             Users users = injector.getInstance(Users.class);
 
@@ -692,12 +676,9 @@ public class AmbariServer
     }
 
     public void stop() throws Exception {
-        try
-        {
+        try {
             server.stop();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             LOG.error("Error stopping the server", e);
         }
     }
@@ -786,21 +767,17 @@ public class AmbariServer
         // to skip some hosts from proxy, pipe-separate names using, i.e.:
         // -Dhttp.nonProxyHosts=*.domain.com|host.internal.net
 
-        if (null != proxyUser && null != proxyPass)
-        {
+        if (null != proxyUser && null != proxyPass) {
             LOG.info("Proxy authentication enabled");
 
-            Authenticator.setDefault(new Authenticator()
-            {
+            Authenticator.setDefault(new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(proxyUser, proxyPass
                             .toCharArray());
                 }
             });
-        }
-        else
-        {
+        } else {
             LOG.debug("Proxy authentication not specified");
         }
     }
@@ -809,8 +786,7 @@ public class AmbariServer
         Injector injector = Guice.createInjector(new ControllerModule());
 
         DemoServer server = null;
-        try
-        {
+        try {
             LOG.info("Getting the controller");
 
             setupProxyAuth();
@@ -823,12 +799,9 @@ public class AmbariServer
             ViewRegistry.initInstance(server.viewRegistry);
             ComponentSSLConfiguration.instance().init(server.configs);
             server.run();
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             LOG.error("Failed to run the Ambari Server", t);
-            if (server != null)
-            {
+            if (server != null) {
                 server.stop();
             }
             System.exit(-1);
