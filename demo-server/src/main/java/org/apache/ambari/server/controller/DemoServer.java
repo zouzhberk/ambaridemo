@@ -119,7 +119,9 @@ public class DemoServer {
     public volatile boolean running = true; // true while controller runs
 
     final String CONTEXT_PATH = "/";
-    final String SPRING_CONTEXT_LOCATION = "classpath:/webapp/WEB-INF/spring-security.xml";
+//    final String SPRING_CONTEXT_LOCATION = "classpath:/webapp/WEB-INF/spring-security.xml";
+
+    final String SPRING_CONTEXT_LOCATION = "webapp/WEB-INF/spring-security.xml";
     final String DISABLED_ENTRIES_SPLITTER = "\\|";
 
     @Inject
@@ -201,6 +203,8 @@ public class DemoServer {
         DatabaseChecker.checkDBConsistency();
 
         try {
+            //
+
             ClassPathXmlApplicationContext parentSpringAppContext = new ClassPathXmlApplicationContext();
             parentSpringAppContext.refresh();
             ConfigurableListableBeanFactory factory = parentSpringAppContext
@@ -676,6 +680,34 @@ public class DemoServer {
     }
 
     /**
+     * Sets up proxy authentication.  This must be done before the
+     * server is
+     * initialized since <code>AmbariMetaInfo</code> requires potential URL
+     * lookups that may need the proxy.
+     */
+    static void setupProxyAuth() {
+        final String proxyUser = System.getProperty("http.proxyUser");
+        final String proxyPass = System.getProperty("http.proxyPassword");
+
+        // to skip some hosts from proxy, pipe-separate names using, i.e.:
+        // -Dhttp.nonProxyHosts=*.domain.com|host.internal.net
+
+        if (null != proxyUser && null != proxyPass) {
+            LOG.info("Proxy authentication enabled");
+
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(proxyUser, proxyPass
+                            .toCharArray());
+                }
+            });
+        } else {
+            LOG.debug("Proxy authentication not specified");
+        }
+    }
+
+    /**
      * Deprecated. Instead, use {@link StaticallyInject}.
      * <p/>
      * Static injection replacement to wait Persistence Service start.
@@ -744,34 +776,6 @@ public class DemoServer {
                 .init(injector.getInstance(ClusterDAO.class));
         ActionManager.setTopologyManager(injector
                 .getInstance(TopologyManager.class));
-    }
-
-    /**
-     * Sets up proxy authentication.  This must be done before the
-     * server is
-     * initialized since <code>AmbariMetaInfo</code> requires potential URL
-     * lookups that may need the proxy.
-     */
-    static void setupProxyAuth() {
-        final String proxyUser = System.getProperty("http.proxyUser");
-        final String proxyPass = System.getProperty("http.proxyPassword");
-
-        // to skip some hosts from proxy, pipe-separate names using, i.e.:
-        // -Dhttp.nonProxyHosts=*.domain.com|host.internal.net
-
-        if (null != proxyUser && null != proxyPass) {
-            LOG.info("Proxy authentication enabled");
-
-            Authenticator.setDefault(new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(proxyUser, proxyPass
-                            .toCharArray());
-                }
-            });
-        } else {
-            LOG.debug("Proxy authentication not specified");
-        }
     }
 
     public static void main(String[] args) throws Exception {

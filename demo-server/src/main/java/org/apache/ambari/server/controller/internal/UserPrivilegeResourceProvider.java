@@ -96,6 +96,22 @@ public class UserPrivilegeResourceProvider extends ReadOnlyResourceProvider {
     propertyIds.add(PRIVILEGE_USER_NAME_PROPERTY_ID);
   }
 
+  @SuppressWarnings("serial")
+  private static Set<String> pkPropertyIds = new HashSet<String>() {
+    {
+      add(PRIVILEGE_PRIVILEGE_ID_PROPERTY_ID);
+    }
+  };
+
+  /**
+   * The key property ids for a privilege resource.
+   */
+  private static Map<Resource.Type, String> keyPropertyIds = new HashMap<Resource.Type, String>();
+
+  static {
+    keyPropertyIds.put(Resource.Type.User, PRIVILEGE_USER_NAME_PROPERTY_ID);
+    keyPropertyIds.put(Resource.Type.UserPrivilege, PRIVILEGE_PRIVILEGE_ID_PROPERTY_ID);
+  }
   /**
    * Static initialization.
    *
@@ -110,22 +126,6 @@ public class UserPrivilegeResourceProvider extends ReadOnlyResourceProvider {
     UserPrivilegeResourceProvider.clusterDAO      = clusterDAO;
     UserPrivilegeResourceProvider.groupDAO        = groupDAO;
     UserPrivilegeResourceProvider.viewInstanceDAO = viewInstanceDAO;
-  }
-
-  @SuppressWarnings("serial")
-  private static Set<String> pkPropertyIds = new HashSet<String>() {
-    {
-      add(PRIVILEGE_PRIVILEGE_ID_PROPERTY_ID);
-    }
-  };
-
-  /**
-   * The key property ids for a privilege resource.
-   */
-  private static Map<Resource.Type, String> keyPropertyIds = new HashMap<Resource.Type, String>();
-  static {
-    keyPropertyIds.put(Resource.Type.User, PRIVILEGE_USER_NAME_PROPERTY_ID);
-    keyPropertyIds.put(Resource.Type.UserPrivilege, PRIVILEGE_PRIVILEGE_ID_PROPERTY_ID);
   }
 
 
